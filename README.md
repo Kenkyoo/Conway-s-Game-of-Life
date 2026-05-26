@@ -5,7 +5,7 @@ Final project for [Code in Place](https://codeinplace.stanford.edu/) — Stanfor
 ---
 
 
-![Conway Game of Life](Images/img1.png)
+![Conway Game of Life](Images/img3.png)
 
 ## What is Conway's Game of Life?
 
@@ -37,6 +37,8 @@ python main.py
 No external libraries are needed.
 
 ---
+
+![Conway Game of Life](Images/img1.png)
 
 ## How to Use
 
@@ -91,5 +93,9 @@ README.md ← this file
 ![Stanford Logo](Images/stanford.png)
 
 ## Author
+
+Kenkyo
+
+Made with a lot of love ❤️
 
 Built as the final project for Code in Place 2025 — Stanford University.
