@@ -4,6 +4,9 @@ Final project for [Code in Place](https://codeinplace.stanford.edu/) — Stanfor
 
 ---
 
+
+![Conway Game of Life](Images/img1.png)
+
 ## What is Conway's Game of Life?
 
 The Game of Life is a **cellular automaton** devised by British mathematician **John Horton Conway** in 1970. It is not a game in the traditional sense — there are no players, no moves, and no winner. It is a **zero-player simulation** that evolves entirely from its initial state based on a simple set of rules.
@@ -20,6 +23,8 @@ The simulation takes place on a two-dimensional grid of cells, each of which can
 From these four rules, remarkably complex and beautiful patterns emerge — stable structures, oscillators, and even patterns that move across the grid indefinitely.
 
 ---
+
+![Conway](Images/img2.jpeg)
 
 ## How to Run
 
@@ -82,6 +87,8 @@ README.md ← this file
 ```
 
 ---
+
+![Stanford Logo](Images/stanford.png)
 
 ## Author
 
