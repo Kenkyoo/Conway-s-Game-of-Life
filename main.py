@@ -4,15 +4,30 @@ import random
 # ── Constants ─────────────────────────────────────────────────────────────────
 ROWS  = 40
 COLS  = 60
-SIZE  = 14          # pixels per cell
+SIZE  = 14
 WIDTH = COLS * SIZE
 HEIGHT = ROWS * SIZE
 DELAY = 80
 
-COLOR_ALIVE  = "#39ff14"   # neon green
-COLOR_DEAD   = "#111111"
-COLOR_GRID   = "#1a1a1a"
-COLOR_BG     = "#0a0a0a"
+COLOR_DEAD   = "#11111b"
+COLOR_GRID   = "#1e1e2e"
+COLOR_BG     = "#181825"
+
+# Colors pallete catppuccin mocha
+COLORS = {
+    "Rosewater": "#f5e0dc",
+    "Flamingo":  "#f2cdcd",
+    "Pink":      "#f5c2e7",
+    "Mauve":     "#cba6f7",
+    "Red":       "#f38ba8",
+    "Maroon":    "#eba0ac",
+    "Peach":     "#fab387",
+    "Yellow":    "#f9e2af",
+    "Green":     "#a6e3a1",
+    "Teal":      "#94e2d5",
+    "Sky":       "#89b4fa",
+    "Sapphire":  "#74c7ec",
+}
 
 # ── Grid ──────────────────────────────────────────────────────────────────────
 
@@ -96,7 +111,7 @@ class GameOfLife:
         self.running   = False
         self.job       = None
         self.generation = 0
-
+        self.color_alive = list(COLORS.values())[0]
         self._create_widgets()
         self.draw()
 
@@ -106,7 +121,7 @@ class GameOfLife:
         # Title
         title = tk.Label(
             self.root, text="GAME  OF  LIFE",
-            bg=COLOR_BG, fg=COLOR_ALIVE,
+            bg=COLOR_BG, fg=self.color_alive,
             font=("Courier", 16, "bold"), pady=8
         )
         title.pack()
@@ -126,8 +141,8 @@ class GameOfLife:
         panel.pack()
 
         btn_style = dict(
-            bg="#222", fg="white",
-            activebackground="#333", activeforeground=COLOR_ALIVE,
+            bg="#cba6f7", fg="#11111b",
+            activebackground="#7f849c", activeforeground=self.color_alive,
             relief="flat", font=("Courier", 10, "bold"),
             width=10, pady=4, cursor="hand2"
         )
@@ -157,13 +172,45 @@ class GameOfLife:
         tk.Button(panel, text="⁂  Random",
                   command=self.pattern_random, **btn_style).grid(row=2, column=2, padx=4)
 
+        # ── Color selector ────────────────────────────────────────────────────
+        color_frame = tk.Frame(self.root, bg=COLOR_BG, pady=4)
+        color_frame.pack()
+ 
+        tk.Label(color_frame, text="Cell color:", bg=COLOR_BG, fg="#888",
+                 font=("Courier", 9)).pack(side="left", padx=(0, 6))
+ 
+        # Small square showing current color
+        self.color_preview = tk.Canvas(color_frame, width=16, height=16,
+                                       bg=self.color_alive, highlightthickness=1,
+                                       highlightbackground="#444")
+        self.color_preview.pack(side="left", padx=(0, 4))
+ 
+        # OptionMenu
+        self.selected_color = tk.StringVar(value=list(COLORS.keys())[0])
+        self.selected_color.trace("w", self._on_color_change)
+ 
+        menu = tk.OptionMenu(color_frame, self.selected_color, *COLORS.keys())
+        menu.config(bg="#1e1e2e", fg="#cdd6f4", activebackground="#333",
+                    activeforeground="#cdd6f4", relief="flat",
+                    font=("Courier", 9), highlightthickness=0,
+                    cursor="hand2", width=12)
+        menu["menu"].config(bg="#1e1e2e", fg="#cdd6f4",
+                            activebackground="#333", activeforeground="#cdd6f4",
+                            font=("Courier", 9))
+        menu.pack(side="left")
+ 
         # Generation counter
-        self.lbl_gen = tk.Label(
-            self.root, text="Generation: 0",
-            bg=COLOR_BG, fg="#666",
-            font=("Courier", 9)
-        )
+        self.lbl_gen = tk.Label(self.root, text="Generation: 0",
+                                bg=COLOR_BG, fg="#cdd6f4", font=("Courier", 9))
         self.lbl_gen.pack(pady=(2, 8))
+ 
+    # ── Color change ──────────────────────────────────────────────────────────
+ 
+    def _on_color_change(self, *args):
+        name = self.selected_color.get()
+        self.color_alive = COLORS[name]
+        self.color_preview.config(bg=self.color_alive)
+        self.draw()
 
     # ── Drawing ───────────────────────────────────────────────────────────────
 
@@ -175,7 +222,7 @@ class GameOfLife:
                 y1 = row  * SIZE
                 x2 = x1 + SIZE - 1
                 y2 = y1 + SIZE - 1
-                color = COLOR_ALIVE if self.grid[row][col] else COLOR_DEAD
+                color = self.color_alive if self.grid[row][col] else COLOR_DEAD
                 self.canvas.create_rectangle(x1, y1, x2, y2,
                                              fill=color, outline=COLOR_GRID, width=1)
 
