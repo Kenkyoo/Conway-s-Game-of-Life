@@ -38,7 +38,7 @@ No external libraries are needed.
 
 ---
 
-![Conway Game of Life](Images/img1.png)
+![Conway Game of Life](Images/wallpaper.png)
 
 ## How to Use
 
@@ -57,6 +57,8 @@ When the window opens, the grid starts empty. Here is the recommended flow:
 - **Random** — fills the grid randomly at ~30% density. A great way to watch complex behavior emerge from chaos.
 
 ---
+
+![Conway](Images/img4.png)
 
 ## How It Was Built
 

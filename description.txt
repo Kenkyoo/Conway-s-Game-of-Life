@@ -1,0 +1,82 @@
+Made with a lot of love ❤️. Kenkyo
+
+What is Conway's Game of Life? 
+
+The Game of Life, also known as Conway's Game of Life or simply Life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970. It is a zero-player game, meaning that its evolution is determined by its initial state, requiring no further input. One interacts with the Game of Life by creating an initial configuration and observing how it evolves in discrete time steps called generations. There is no limit to the number of generations (computational resources permitting) or win condition. 
+
+The simulation takes place on a two-dimensional grid of cells, each of which can be either alive or dead. At every step (called a generation), the following four rules are applied simultaneously to every cell.
+
+RULES:
+
+The universe of the Game of Life is an infinite, two-dimensional orthogonal grid of square cells, each of which is in one of two possible states, live or dead (or populated and unpopulated, respectively). Every cell interacts with its eight neighbours, which are the cells that are horizontally, vertically, or diagonally adjacent. At each step in time, the following transitions occur:
+
+    Any live cell with fewer than two live neighbours dies, as if by underpopulation.
+    Any live cell with two or three live neighbours lives on to the next generation.
+    Any live cell with more than three live neighbours dies, as if by overpopulation.
+    Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+
+The initial pattern constitutes the seed of the system. The first generation is created by applying the above rules simultaneously to every cell in the seed, live or dead; births and deaths occur simultaneously, and the discrete moment at which this happens is sometimes called a tick. Each generation is a pure function of the preceding one. The rules continue to be applied repeatedly to create further generations.
+
+In the editable widget below, one of the patterns discovered by Conway, the I-heptomino can be simulated. 
+
+How to Use
+
+When the window opens, the grid starts empty. Here is the recommended flow:
+
+    Load a pattern — click one of the pattern buttons at the bottom (Glider, Pulsar, or Random) to populate the grid, or draw your own cells by clicking directly on the grid.
+    Start the simulation — press the ▶ Start button to begin. Generations will advance automatically.
+    Pause at any time — press ⏸ Pause to freeze the simulation. You can then click cells to edit the grid and resume.
+    Clear the grid — press 🗑 Clear to reset everything and start over.
+    Change cell color — use the color selector at the bottom to switch the alive cell color in real time, even while the simulation is running.
+
+Predefined Patterns
+
+    Glider — the most famous pattern in the Game of Life. A small shape that travels diagonally across the grid indefinitely.
+    Pulsar — a period-3 oscillator: a symmetrical structure that cycles through three states and repeats.
+    Random — fills the grid randomly at ~30% density. A great way to watch complex behavior emerge from chaos.
+
+Added blinker and pentadecathlon patterns.
+
+How It Was Built
+
+The project is written in a single file (main.py) using only Python's standard library.
+Key components
+
+tkinter — Python's built-in GUI library, used to create the window, draw the grid on a Canvas, and handle all user interaction (button clicks, mouse drawing, dropdown selection).
+
+2D lists — the grid is represented as a list of lists (grid[row][col]), where 0 is a dead cell and 1 is a live cell. A new grid is computed from the current one at every generation.
+
+Functions — the logic is organized into small, focused functions:
+
+    create_grid() — initializes an empty grid
+    count_neighbors() — counts live neighbors for a given cell, with toroidal (wrap-around) edges so cells on the border connect to the opposite side
+    next_generation() — applies Conway's four rules and returns the new grid
+    load_glider(), load_pulsar(), load_random() — preset starting patterns
+
+root.after() — tkinter's method for scheduling repeated actions without blocking the UI. Used to advance one generation every 80 ms, creating smooth animation.
+
+StringVar with .trace() — a tkinter mechanism that automatically triggers a function whenever a variable changes. Used to update the cell color the moment a new color is selected from the dropdown.
+
+How to Run
+
+Requirements: Python 3 with tkinter (included in standard Python installations).
+
+python main.py
+
+No external libraries are needed.
+
+
+Done!
+
+Author
+
+Kenkyo
+
+Made with a lot of love ❤️
+
+Built as the final project for Code in Place 2025 — Stanford University.
+
+
+My github repo: https://github.com/Kenkyoo
+
+Repo project: https://github.com/Kenkyoo/Conway-s-Game-of-Life
