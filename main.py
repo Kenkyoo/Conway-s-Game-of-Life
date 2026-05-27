@@ -98,18 +98,28 @@ def load_pulsar(grid):
 def load_random(grid):
     return [[1 if random.random() < 0.3 else 0 for _ in range(COLS)] for _ in range(ROWS)]
 
+
 def load_blinker(grid):
-    r, c = ROWS//2, COLS//2
-    for i in range(3):
-        grid[r][c+i] = 1
+    grid = create_grid()
+    for r in range(2, ROWS - 2, 6):
+        for c in range(2, COLS - 3, 6):
+            for i in range(3):
+                grid[r][c+i] = 1
     return grid
 
-def load_toad(grid):
-    r, c = ROWS//2, COLS//2
-    pattern = [(r, c+1), (r, c+2), (r, c+3),
-               (r+1, c), (r+1, c+1), (r+1, c+2)]
-    for row, col in pattern:
-        grid[row][col] = 1
+
+def load_pentadecathlon(grid):
+    grid = create_grid()
+    cr, cc = ROWS // 2 - 1, COLS // 2 - 5
+    pattern = [
+        (0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),(0,8),
+        (1,0),(1,9),
+        (2,1),(2,2),(2,3),(2,4),(2,5),(2,6),(2,7),(2,8),
+    ]
+    for dr, dc in pattern:
+        r, c = cr + dr, cc + dc
+        if 0 <= r < ROWS and 0 <= c < COLS:
+            grid[r][c] = 1
     return grid
 
 # ── Interface ─────────────────────────────────────────────────────────────────
@@ -121,11 +131,12 @@ class GameOfLife:
         self.root.configure(bg=COLOR_BG)
         self.root.resizable(False, False)
 
-        self.grid      = create_grid()
-        self.running   = False
-        self.job       = None
+        self.grid       = create_grid()
+        self.running    = False
+        self.job        = None
         self.generation = 0
         self.color_alive = list(COLORS.values())[0]
+
         self._create_widgets()
         self.draw()
 
@@ -133,12 +144,11 @@ class GameOfLife:
 
     def _create_widgets(self):
         # Title
-        title = tk.Label(
+        tk.Label(
             self.root, text="GAME  OF  LIFE",
             bg=COLOR_BG, fg="#f38ba8",
             font=("Courier", 12, "bold"), pady=8
-        )
-        title.pack()
+        ).pack()
 
         # Canvas
         self.canvas = tk.Canvas(
@@ -150,11 +160,19 @@ class GameOfLife:
         self.canvas.bind("<Button-1>", self.on_click)
         self.canvas.bind("<B1-Motion>", self.on_click)
 
-        # ── Main ──────────────────────────────────────────────────────────
 
-        self.lbl_gen4 = tk.Label(self.root, text="Main",
-                                bg=COLOR_BG, fg="#89b4fa", font=("Courier", 12))
-        self.lbl_gen4.pack(pady=(2, 2))
+        # ── Main label ────────────────────────────────────────────────────────
+        tk.Label(
+            self.root, text="Main",
+            bg=COLOR_BG, fg="#89b4fa", font=("Courier", 12)
+        ).pack(pady=(4, 0))
+
+        # How to use
+        tk.Label(
+            self.root,
+            text="How to use: First select a pattern, then press start. Done!",
+            bg=COLOR_BG, fg="#a6e3a1", font=("Courier", 8)
+        ).pack(pady=(6, 0))
 
         # Button panel
         panel = tk.Frame(self.root, bg=COLOR_BG, pady=8)
@@ -167,62 +185,51 @@ class GameOfLife:
             width=8, pady=2, cursor="hand2"
         )
 
-        self.btn_start = tk.Button(panel, text="▶  Start",
-                                   command=self.start, **btn_style)
-        self.btn_start.grid(row=2, column=1, padx=4)
-
-        self.btn_pause = tk.Button(panel, text="⏸  Pause",
-                                   command=self.pause, **btn_style,
-                                   state="disabled")
-        self.btn_pause.grid(row=2, column=2, padx=4)
-
-        tk.Button(panel, text="🗑  Clear",
-                  command=self.clear, **btn_style).grid(row=2, column=3, padx=4)
-
-
-        # ── Info ──────────────────────────────────────────────────────────
-
-        self.lbl_gen3 = tk.Label(self.root, text="How to use: First select a pattern, then press start. Done!",
-                                bg=COLOR_BG, fg="#a6e3a1", font=("Courier", 8))
-        self.lbl_gen3.pack(pady=(2, 8))
-
-        # Pattern label
-
+        # Patterns row
         tk.Label(panel, text="Patterns:", bg=COLOR_BG, fg="#cdd6f4",
-                 font=("Courier", 9)).grid(row=1, column=1, columnspan=3, pady=(8, 2))
+                 font=("Courier", 9)).grid(row=0, column=0, columnspan=5, pady=(0, 4))
 
         tk.Button(panel, text="✦  Glider",
-                  command=self.pattern_glider, **btn_style).grid(row=0, column=0, padx=4)
-
+                  command=self.pattern_glider, **btn_style).grid(row=1, column=0, padx=4)
         tk.Button(panel, text="✦  Pulsar",
-                  command=self.pattern_pulsar, **btn_style).grid(row=0, column=1, padx=4)
-
+                  command=self.pattern_pulsar, **btn_style).grid(row=1, column=1, padx=4)
         tk.Button(panel, text="⁂  Random",
-                  command=self.pattern_random, **btn_style).grid(row=0, column=2, padx=4)
-
+                  command=self.pattern_random, **btn_style).grid(row=1, column=2, padx=4)
         tk.Button(panel, text="⁂  Blinker",
-                  command=self.pattern_blinker, **btn_style).grid(row=0, column=3, padx=4)
+                  command=self.pattern_blinker, **btn_style).grid(row=1, column=3, padx=4)
+        tk.Button(panel, text="⁂  Penta",
+                  command=self.pattern_pentadecathlon, **btn_style).grid(row=1, column=4, padx=4)
 
-        tk.Button(panel, text="⁂  Toad",
-                  command=self.pattern_load_toad, **btn_style).grid(row=0, column=4, padx=4)
+        # Controls row
+        tk.Label(panel, text="Controls:", bg=COLOR_BG, fg="#cdd6f4",
+                 font=("Courier", 9)).grid(row=2, column=0, columnspan=5, pady=(8, 4))
+
+        self.btn_start = tk.Button(panel, text="▶  Start",
+                                   command=self.start, **btn_style)
+        self.btn_start.grid(row=3, column=1, padx=4)
+
+        self.btn_pause = tk.Button(panel, text="⏸  Pause",
+                                   command=self.pause, **btn_style, state="disabled")
+        self.btn_pause.grid(row=3, column=2, padx=4)
+
+        tk.Button(panel, text="🗑  Clear",
+                  command=self.clear, **btn_style).grid(row=3, column=3, padx=4)
 
         # ── Color selector ────────────────────────────────────────────────────
         color_frame = tk.Frame(self.root, bg=COLOR_BG, pady=4)
         color_frame.pack()
- 
+
         tk.Label(color_frame, text="Cell color:", bg=COLOR_BG, fg="#cdd6f4",
                  font=("Courier", 9)).pack(side="left", padx=(0, 6))
- 
-        # Small square showing current color
+
         self.color_preview = tk.Canvas(color_frame, width=16, height=16,
                                        bg=self.color_alive, highlightthickness=1,
                                        highlightbackground="#444")
         self.color_preview.pack(side="left", padx=(0, 4))
- 
-        # OptionMenu
+
         self.selected_color = tk.StringVar(value=list(COLORS.keys())[0])
         self.selected_color.trace("w", self._on_color_change)
- 
+
         menu = tk.OptionMenu(color_frame, self.selected_color, *COLORS.keys())
         menu.config(bg="#1e1e2e", fg="#cdd6f4", activebackground="#333",
                     activeforeground="#cdd6f4", relief="flat",
@@ -232,22 +239,18 @@ class GameOfLife:
                             activebackground="#333", activeforeground="#cdd6f4",
                             font=("Courier", 9))
         menu.pack(side="left")
- 
-    # ── Generation counter ──────────────────────────────────────────────────────────
 
+        # Generation counter
         self.lbl_gen = tk.Label(self.root, text="Generation: 0",
                                 bg=COLOR_BG, fg="#cdd6f4", font=("Courier", 9))
-        self.lbl_gen.pack(pady=(2, 8))
+        self.lbl_gen.pack(pady=(6, 6))
 
+        # Footer
+        tk.Label(self.root, text="Made by Kenkyo with a lot of ❤️ || My github: https://github.com/Kenkyoo",
+                 bg=COLOR_BG, fg="#f5e0dc", font=("Courier", 10)).pack(pady=(2, 8))
 
-    # ── About ──────────────────────────────────────────────────────────
-
-        self.lbl_gen2 = tk.Label(self.root, text="Made by Kenkyo with a lot of ❤️",
-                                bg=COLOR_BG, fg="#f5e0dc", font=("Courier", 9))
-        self.lbl_gen2.pack(pady=(2, 8))
- 
     # ── Color change ──────────────────────────────────────────────────────────
- 
+
     def _on_color_change(self, *args):
         name = self.selected_color.get()
         self.color_alive = COLORS[name]
@@ -260,8 +263,8 @@ class GameOfLife:
         self.canvas.delete("all")
         for row in range(ROWS):
             for col in range(COLS):
-                x1 = col  * SIZE
-                y1 = row  * SIZE
+                x1 = col * SIZE
+                y1 = row * SIZE
                 x2 = x1 + SIZE - 1
                 y2 = y1 + SIZE - 1
                 color = self.color_alive if self.grid[row][col] else COLOR_DEAD
@@ -286,30 +289,6 @@ class GameOfLife:
         self.draw()
         if self.running:
             self.job = self.root.after(DELAY, self._tick)
-
-    # ── Main ─────────────────────────────────────────────────────────────
-
-    def _main(self):
-        self.lbl_gen4.config()
-        self.draw()
-        if self.running:
-            self.job = self.root.after(DELAY, self._main)
-
-    # ── About ─────────────────────────────────────────────────────────────
-
-    def _about(self):
-        self.lbl_gen2.config()
-        self.draw()
-        if self.running:
-            self.job = self.root.after(DELAY, self._about)
-
-    # ── Info ─────────────────────────────────────────────────────────────
-
-    def _info(self):
-        self.lbl_gen3.config()
-        self.draw()
-        if self.running:
-            self.job = self.root.after(DELAY, self._info)
 
     # ── Buttons ───────────────────────────────────────────────────────────────
 
@@ -362,9 +341,9 @@ class GameOfLife:
         self.lbl_gen.config(text="Generation: 0")
         self.draw()
 
-    def pattern_load_toad(self):
+    def pattern_pentadecathlon(self):
         self.pause()
-        self.grid = load_toad(self.grid)
+        self.grid = load_pentadecathlon(self.grid)
         self.generation = 0
         self.lbl_gen.config(text="Generation: 0")
         self.draw()
