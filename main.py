@@ -98,6 +98,20 @@ def load_pulsar(grid):
 def load_random(grid):
     return [[1 if random.random() < 0.3 else 0 for _ in range(COLS)] for _ in range(ROWS)]
 
+def load_blinker(grid):
+    r, c = ROWS//2, COLS//2
+    for i in range(3):
+        grid[r][c+i] = 1
+    return grid
+
+def load_toad(grid):
+    r, c = ROWS//2, COLS//2
+    pattern = [(r, c+1), (r, c+2), (r, c+3),
+               (r+1, c), (r+1, c+1), (r+1, c+2)]
+    for row, col in pattern:
+        grid[row][col] = 1
+    return grid
+
 # ── Interface ─────────────────────────────────────────────────────────────────
 
 class GameOfLife:
@@ -136,6 +150,12 @@ class GameOfLife:
         self.canvas.bind("<Button-1>", self.on_click)
         self.canvas.bind("<B1-Motion>", self.on_click)
 
+        # ── Main ──────────────────────────────────────────────────────────
+
+        self.lbl_gen4 = tk.Label(self.root, text="Main",
+                                bg=COLOR_BG, fg="#89b4fa", font=("Courier", 12))
+        self.lbl_gen4.pack(pady=(2, 2))
+
         # Button panel
         panel = tk.Frame(self.root, bg=COLOR_BG, pady=8)
         panel.pack()
@@ -149,15 +169,16 @@ class GameOfLife:
 
         self.btn_start = tk.Button(panel, text="▶  Start",
                                    command=self.start, **btn_style)
-        self.btn_start.grid(row=0, column=0, padx=4)
+        self.btn_start.grid(row=2, column=1, padx=4)
 
         self.btn_pause = tk.Button(panel, text="⏸  Pause",
                                    command=self.pause, **btn_style,
                                    state="disabled")
-        self.btn_pause.grid(row=0, column=1, padx=4)
+        self.btn_pause.grid(row=2, column=2, padx=4)
 
         tk.Button(panel, text="🗑  Clear",
-                  command=self.clear, **btn_style).grid(row=0, column=2, padx=4)
+                  command=self.clear, **btn_style).grid(row=2, column=3, padx=4)
+
 
         # ── Info ──────────────────────────────────────────────────────────
 
@@ -168,22 +189,28 @@ class GameOfLife:
         # Pattern label
 
         tk.Label(panel, text="Patterns:", bg=COLOR_BG, fg="#cdd6f4",
-                 font=("Courier", 9)).grid(row=1, column=0, columnspan=3, pady=(8, 2))
+                 font=("Courier", 9)).grid(row=1, column=1, columnspan=3, pady=(8, 2))
 
         tk.Button(panel, text="✦  Glider",
-                  command=self.pattern_glider, **btn_style).grid(row=2, column=0, padx=4)
+                  command=self.pattern_glider, **btn_style).grid(row=0, column=0, padx=4)
 
         tk.Button(panel, text="✦  Pulsar",
-                  command=self.pattern_pulsar, **btn_style).grid(row=2, column=1, padx=4)
+                  command=self.pattern_pulsar, **btn_style).grid(row=0, column=1, padx=4)
 
         tk.Button(panel, text="⁂  Random",
-                  command=self.pattern_random, **btn_style).grid(row=2, column=2, padx=4)
+                  command=self.pattern_random, **btn_style).grid(row=0, column=2, padx=4)
+
+        tk.Button(panel, text="⁂  Blinker",
+                  command=self.pattern_blinker, **btn_style).grid(row=0, column=3, padx=4)
+
+        tk.Button(panel, text="⁂  Toad",
+                  command=self.pattern_load_toad, **btn_style).grid(row=0, column=4, padx=4)
 
         # ── Color selector ────────────────────────────────────────────────────
         color_frame = tk.Frame(self.root, bg=COLOR_BG, pady=4)
         color_frame.pack()
  
-        tk.Label(color_frame, text="Cell color:", bg=COLOR_BG, fg="#888",
+        tk.Label(color_frame, text="Cell color:", bg=COLOR_BG, fg="#cdd6f4",
                  font=("Courier", 9)).pack(side="left", padx=(0, 6))
  
         # Small square showing current color
@@ -260,6 +287,14 @@ class GameOfLife:
         if self.running:
             self.job = self.root.after(DELAY, self._tick)
 
+    # ── Main ─────────────────────────────────────────────────────────────
+
+    def _main(self):
+        self.lbl_gen4.config()
+        self.draw()
+        if self.running:
+            self.job = self.root.after(DELAY, self._main)
+
     # ── About ─────────────────────────────────────────────────────────────
 
     def _about(self):
@@ -316,6 +351,20 @@ class GameOfLife:
     def pattern_random(self):
         self.pause()
         self.grid = load_random(self.grid)
+        self.generation = 0
+        self.lbl_gen.config(text="Generation: 0")
+        self.draw()
+
+    def pattern_blinker(self):
+        self.pause()
+        self.grid = load_blinker(self.grid)
+        self.generation = 0
+        self.lbl_gen.config(text="Generation: 0")
+        self.draw()
+
+    def pattern_load_toad(self):
+        self.pause()
+        self.grid = load_toad(self.grid)
         self.generation = 0
         self.lbl_gen.config(text="Generation: 0")
         self.draw()
