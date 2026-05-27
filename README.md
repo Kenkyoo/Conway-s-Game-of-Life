@@ -5,7 +5,7 @@ Final project for [Code in Place](https://codeinplace.stanford.edu/) — Stanfor
 ---
 
 
-![Conway Game of Life](Images/img3.png)
+![Conway Game of Life](Images/img.png)
 
 ## What is Conway's Game of Life?
 
