@@ -58,11 +58,12 @@ When the window opens, the grid starts empty. Here is the recommended flow:
 
 ---
 
-![Conway](Images/img4.png)
 
 ## How It Was Built
 
 The project is written in a single file (`main.py`) using only Python's standard library.
+
+![Rules](Images/img4.png)
 
 ### Key components
 
@@ -87,6 +88,8 @@ The project is written in a single file (`main.py`) using only Python's standard
 
 ```
 main.py   ← entire project in a single file
+Images   ← wallpapers and images for readme
+description.txt   ← description project for the course
 README.md ← this file
 ```
 
