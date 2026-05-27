@@ -38,7 +38,7 @@ No external libraries are needed.
 
 ---
 
-![Conway Game of Life](Images/wallpaper.png)
+![Conway Game of Life](Images/img4.png)
 
 ## How to Use
 
@@ -63,7 +63,7 @@ When the window opens, the grid starts empty. Here is the recommended flow:
 
 The project is written in a single file (`main.py`) using only Python's standard library.
 
-![Rules](Images/img4.png)
+![Rules](Images/wallpaper.png)
 
 ### Key components
 
