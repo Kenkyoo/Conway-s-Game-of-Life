@@ -4,7 +4,7 @@ import random
 # ── Constants ─────────────────────────────────────────────────────────────────
 ROWS  = 40
 COLS  = 60
-SIZE  = 14
+SIZE  = 12
 WIDTH = COLS * SIZE
 HEIGHT = ROWS * SIZE
 DELAY = 80
@@ -121,8 +121,8 @@ class GameOfLife:
         # Title
         title = tk.Label(
             self.root, text="GAME  OF  LIFE",
-            bg=COLOR_BG, fg=self.color_alive,
-            font=("Courier", 16, "bold"), pady=8
+            bg=COLOR_BG, fg="#f38ba8",
+            font=("Courier", 12, "bold"), pady=8
         )
         title.pack()
 
@@ -143,8 +143,8 @@ class GameOfLife:
         btn_style = dict(
             bg="#cba6f7", fg="#11111b",
             activebackground="#7f849c", activeforeground=self.color_alive,
-            relief="flat", font=("Courier", 10, "bold"),
-            width=10, pady=4, cursor="hand2"
+            relief="flat", font=("Courier", 8, "bold"),
+            width=8, pady=2, cursor="hand2"
         )
 
         self.btn_start = tk.Button(panel, text="▶  Start",
@@ -159,8 +159,15 @@ class GameOfLife:
         tk.Button(panel, text="🗑  Clear",
                   command=self.clear, **btn_style).grid(row=0, column=2, padx=4)
 
+        # ── Info ──────────────────────────────────────────────────────────
+
+        self.lbl_gen3 = tk.Label(self.root, text="How to use: First select a pattern, then press start. Done!",
+                                bg=COLOR_BG, fg="#a6e3a1", font=("Courier", 8))
+        self.lbl_gen3.pack(pady=(2, 8))
+
         # Pattern label
-        tk.Label(panel, text="Patterns:", bg=COLOR_BG, fg="#888",
+
+        tk.Label(panel, text="Patterns:", bg=COLOR_BG, fg="#cdd6f4",
                  font=("Courier", 9)).grid(row=1, column=0, columnspan=3, pady=(8, 2))
 
         tk.Button(panel, text="✦  Glider",
@@ -199,10 +206,18 @@ class GameOfLife:
                             font=("Courier", 9))
         menu.pack(side="left")
  
-        # Generation counter
+    # ── Generation counter ──────────────────────────────────────────────────────────
+
         self.lbl_gen = tk.Label(self.root, text="Generation: 0",
                                 bg=COLOR_BG, fg="#cdd6f4", font=("Courier", 9))
         self.lbl_gen.pack(pady=(2, 8))
+
+
+    # ── About ──────────────────────────────────────────────────────────
+
+        self.lbl_gen2 = tk.Label(self.root, text="Made by Kenkyo with a lot of ❤️",
+                                bg=COLOR_BG, fg="#f5e0dc", font=("Courier", 9))
+        self.lbl_gen2.pack(pady=(2, 8))
  
     # ── Color change ──────────────────────────────────────────────────────────
  
@@ -244,6 +259,22 @@ class GameOfLife:
         self.draw()
         if self.running:
             self.job = self.root.after(DELAY, self._tick)
+
+    # ── About ─────────────────────────────────────────────────────────────
+
+    def _about(self):
+        self.lbl_gen2.config()
+        self.draw()
+        if self.running:
+            self.job = self.root.after(DELAY, self._about)
+
+    # ── Info ─────────────────────────────────────────────────────────────
+
+    def _info(self):
+        self.lbl_gen3.config()
+        self.draw()
+        if self.running:
+            self.job = self.root.after(DELAY, self._info)
 
     # ── Buttons ───────────────────────────────────────────────────────────────
 
